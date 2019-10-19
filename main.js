@@ -33,8 +33,6 @@ new CronJob('0 * * * *', function() {
   }
 }, null, true, 'America/Los_Angeles');
 
-// nanoUsdtBuySell();
-
 async function nanoUsdtBuySell() {
 	
 	const book = await getBook();
@@ -108,7 +106,6 @@ function getHighestFillPrice(marketOrder) {
 }
 
 function setLimitSellOrder(nanoToSell, boughtAt) {
-	
 	nanoToSell = round(nanoToSell * 0.999, environment.nanoDecimals); // keep 1c of nano
 	let sellAt = round(boughtAt * ((environment.profitPercent + 100) / 100), environment.priceDecimals);
 
