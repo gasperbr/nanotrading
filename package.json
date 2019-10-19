@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "binance-api-node": "^0.9.9",
+    "cron": "^1.7.2",
+    "dotenv": "^8.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.4"
+  },
+  "type": "module"
+}
