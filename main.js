@@ -5,7 +5,8 @@ const Binance = require('binance-api-node').default;
 const environment = {
 	apiSecret: process.env.BINANCE_API_SECRET,
 	apiKey: process.env.BINANCE_API,
-	profitPercent: float(process.env.PROFIT_PERCENT),
+	profitPercentMin: float(process.env.PROFIT_PERCENT_MIN),
+	profitPercentMax: float(process.env.PROFIT_PERCENT_MAX),
 	everyXHours: int(process.env.EVERY_X_HOURS),
 	minOrderUsdt: float(process.env.MIN_ORDER_USDT),
 	minOrderPercent: int(process.env.MIN_ORDER_SIZE_OF_CURRENT_BALANCE),
@@ -28,8 +29,22 @@ new CronJob('0 * * * *', function() {
 	console.log(hour, environment.everyXHours, ' % ', hour % environment.everyXHours, ' --------- ', new Date().toUTCString());
   if (hour % environment.everyXHours === 0) {
 		nanoUsdtBuySell();
-  }
+  } else {
+		checkForInactiveFunds();
+	}
 }, null, true, 'America/Los_Angeles');
+
+checkForInactiveFunds();
+function checkForInactiveFunds() {
+	client.openOrders({
+		symbol: 'NANOUSDT'
+	}).then(orders => {
+		if (orders.filter(o => o.side === 'SELL').length === 0) {
+			console.log('all orders executed, run bot');
+			nanoUsdtBuySell();
+		}
+	})
+}
 
 async function nanoUsdtBuySell() {
 	
@@ -103,9 +118,14 @@ function getHighestFillPrice(marketOrder) {
 	return float(marketOrder.fills.pop().price);
 }
 
+function getProfit(min, max) { // from 1 to 3
+	const actualPercent = min + ((max - min) * Math.random());
+	return (actualPercent + 100) / 100; // in form of 1.023
+}
+
 function setLimitSellOrder(nanoToSell, boughtAt) {
 	nanoToSell = round(nanoToSell * 0.999, environment.nanoDecimals); // keep 1c of nano
-	let sellAt = round(boughtAt * ((environment.profitPercent + 100) / 100), environment.priceDecimals);
+	let sellAt = round(boughtAt * getProfit(), environment.priceDecimals);
 
 	if (sellExtraNanosOnNextRound.amount > 0) {
 		nanoToSell += sellExtraNanosOnNextRound.amount;
@@ -141,9 +161,6 @@ async function marketBuy() {
 function getMarketBuyAmmount(book) {
 	const usdtAmmount = getUsdtBuyAmmount(book);
 	let nanos = getNanosForPrice(book.lowestAsk, usdtAmmount, environment.nanoDecimals);
-	if (nanos < book.lowestAskAmmount) {
-		nanos *= 1.01; // to avoid min amount error
-	}
 	return round(nanos, environment.nanoDecimals, 'UP'); 
 }
 
@@ -166,12 +183,12 @@ async function tryLimitOrder(book) {
 		};
 		client.order(orderData).then(order => {
 
-			setTimeout(() => { // wait 5s and return order
+			setTimeout(() => { // wait 15min and return order
 				client.getOrder({
 					symbol: 'NANOUSDT',
 					orderId: order.orderId,
 				}).then(resolve).catch(reject);
-			}, 5000);
+			}, 1000 * 60 * 15); // 15min
 
 		}).catch(reject);
 	});
@@ -182,7 +199,7 @@ function getNanosForPrice(price, usdt, nanoDecimals) {
 }
 
 function getUsdtBuyAmmount(book) {
-	return Math.max(environment.minOrderUsdt, book.usdtBalance * (environment.minOrderPercent / 100));
+	return Math.max(environment.minOrderUsdt, book.usdtBalance * environment.minOrderPercent / 100);
 }
 
 // HELPER FUNCTIONS
