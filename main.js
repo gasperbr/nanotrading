@@ -23,14 +23,11 @@ let sellExtraNanosOnNextRound = {
 	boughtAt: 0,
 }
 
-let i = 1;
-new CronJob('0 * * * *', function() {
-	console.log(i, ' ------------------- ', new Date().toUTCString());
-  if (i % environment.everyXHours === 0) {
-		i = 1;
-		nanoUsdtBuySell();
-  } else {
-		i++;
+new CronJob('0 * * * * *', function() {
+	const hour = new Date().getHours();
+	console.log(hour, environment.everyXHours, ' % ', hour % environment.everyXHours, ' --------- ', new Date().toUTCString());
+  if (hour % environment.everyXHours === 0) {
+		//nanoUsdtBuySell();
   }
 }, null, true, 'America/Los_Angeles');
 
