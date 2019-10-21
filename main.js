@@ -22,7 +22,7 @@ let sellExtraNanosOnNextRound = {
 	amount: 0,
 	boughtAt: 0,
 }
-
+nanoUsdtBuySell();
 new CronJob('0 * * * *', function() {
 	const hour = new Date().getHours();
 	console.log(hour, environment.everyXHours, ' % ', hour % environment.everyXHours, ' --------- ', new Date().toUTCString());
