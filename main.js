@@ -27,7 +27,7 @@ new CronJob('0 * * * * *', function() {
 	const hour = new Date().getHours();
 	console.log(hour, environment.everyXHours, ' % ', hour % environment.everyXHours, ' --------- ', new Date().toUTCString());
   if (hour % environment.everyXHours === 0) {
-		//nanoUsdtBuySell();
+		nanoUsdtBuySell();
   }
 }, null, true, 'America/Los_Angeles');
 
