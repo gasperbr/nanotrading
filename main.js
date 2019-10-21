@@ -23,7 +23,7 @@ let sellExtraNanosOnNextRound = {
 	boughtAt: 0,
 }
 
-new CronJob('0 * * * * *', function() {
+new CronJob('0 * * * *', function() {
 	const hour = new Date().getHours();
 	console.log(hour, environment.everyXHours, ' % ', hour % environment.everyXHours, ' --------- ', new Date().toUTCString());
   if (hour % environment.everyXHours === 0) {
