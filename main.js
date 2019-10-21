@@ -38,8 +38,6 @@ async function nanoUsdtBuySell() {
 		return;
 	}
 
-	return console.log(book);
-
 	tryLimitOrder(book).then((order) => {
 		if (order.status === 'FILLED') {
 
