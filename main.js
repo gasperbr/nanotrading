@@ -22,14 +22,15 @@ let sellExtraNanosOnNextRound = {
 	amount: 0,
 	boughtAt: 0,
 }
-let i = environment.everyXHours;
+
+let i = 1;
 new CronJob('0 * * * *', function() {
-	console.log('------------(', i, ')------------------------------');
+	console.log(i, ' ------------------- ', new Date().toUTCString());
   if (i % environment.everyXHours === 0) {
-	i = 1;
-	nanoUsdtBuySell();
+		i = 1;
+		nanoUsdtBuySell();
   } else {
-	i++;
+		i++;
   }
 }, null, true, 'America/Los_Angeles');
 
@@ -39,6 +40,8 @@ async function nanoUsdtBuySell() {
 	if (book.usdtBalance < environment.minOrderUsdt) {
 		return;
 	}
+
+	return console.log(book);
 
 	tryLimitOrder(book).then((order) => {
 		if (order.status === 'FILLED') {
