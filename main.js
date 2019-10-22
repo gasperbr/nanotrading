@@ -56,7 +56,7 @@ async function nanoUsdtBuySell() {
 	tryLimitOrder(book).then((order) => {
 		if (order.status === 'FILLED') {
 
-			console.log(`Bought ${order.executedQty} nanos @${order.price}`);
+			console.log(`Bought ${order.executedQty} nanos @${order.price}  ($${order.executedQty * order.price})`);
 			setLimitSellOrder(float(order.executedQty), float(order.price));
 
 		} else if (order.status === 'PARTIALLY_FILLED') {
@@ -124,8 +124,9 @@ function getProfit(min=2, max=2) {
 }
 
 function setLimitSellOrder(nanoToSell, boughtAt) {
+  const profit = getProfit(environment.profitPercentMin, environment.profitPercentMax);
 	nanoToSell = round(nanoToSell * 0.999, environment.nanoDecimals); // keep 1c of nano
-	let sellAt = round(boughtAt * getProfit(environment.profitPercentMin, environment.profitPercentMax), environment.priceDecimals);
+	let sellAt = round(boughtAt * profit, environment.priceDecimals);
 
 	if (sellExtraNanosOnNextRound.amount > 0) {
 		nanoToSell += sellExtraNanosOnNextRound.amount;
@@ -139,7 +140,7 @@ function setLimitSellOrder(nanoToSell, boughtAt) {
 		price: sellAt,
 	};
 	client.order(orderData).then(order => {
-		console.log(`set sell order @ ${sellAt} for ${nanoToSell} nanos ($${sellAt*nanoToSell})`);
+		console.log(`set sell order @ ${sellAt} for ${nanoToSell} nanos ($${sellAt*nanoToSell}) - profit: ${profit}`);
 		sellExtraNanosOnNextRound.amount = 0;
 		sellExtraNanosOnNextRound.boughtAt = 0;
 	}).catch(msg => {
