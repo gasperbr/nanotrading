@@ -118,14 +118,14 @@ function getHighestFillPrice(marketOrder) {
 	return float(marketOrder.fills.pop().price);
 }
 
-function getProfit(min, max) { // from 1 to 3
+function getProfit(min=2, max=2) {
 	const actualPercent = min + ((max - min) * Math.random());
 	return (actualPercent + 100) / 100; // in form of 1.023
 }
 
 function setLimitSellOrder(nanoToSell, boughtAt) {
 	nanoToSell = round(nanoToSell * 0.999, environment.nanoDecimals); // keep 1c of nano
-	let sellAt = round(boughtAt * getProfit(), environment.priceDecimals);
+	let sellAt = round(boughtAt * getProfit(environment.profitPercentMin, environment.profitPercentMax), environment.priceDecimals);
 
 	if (sellExtraNanosOnNextRound.amount > 0) {
 		nanoToSell += sellExtraNanosOnNextRound.amount;
