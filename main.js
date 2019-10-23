@@ -34,11 +34,12 @@ new CronJob('0 * * * *', function() {
 	}
 }, null, true, 'America/Los_Angeles');
 
-checkForEmptySellSide();
 function checkForEmptySellSide() {
 	Promise.all([client.openOrders({symbol: 'NANOUSDT'}), getBook()]).then(array => {
+
 		const sellOrders = (array[0] || []).filter(o => o.side === 'SELL').map(o => float(o.price));
 		const book = array[1];
+		
 		if (sellOrders.length === 0) {
 			console.log('no other orders, run bot');
 			nanoUsdtBuySell();
