@@ -51,7 +51,7 @@ function checkForEmptySellSide() {
 				}
 			});
 			const percentDifference = (minOrderPrice / book.lowestAsk - 1) * 100;
-			const maxDiff = environment.profitPercentMax + 1.8;
+			const maxDiff = environment.profitPercentMax + 0.5;
 			if (percentDifference > maxDiff) {
 				console.log(`difference lowest ask / my lowest sell (${percentDifference}) too low (max: ${maxDiff}), runnung bot`);
 				nanoUsdtBuySell();
