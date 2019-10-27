@@ -7,6 +7,7 @@ const environment = {
 	apiKey: process.env.BINANCE_API,
 	profitPercentMin: float(process.env.PROFIT_PERCENT_MIN),
 	profitPercentMax: float(process.env.PROFIT_PERCENT_MAX),
+	sellSpreadMax: float(process.env.SELL_SPREAD_MAX),
 	everyXHours: int(process.env.EVERY_X_HOURS),
 	minOrderUsdt: float(process.env.MIN_ORDER_USDT),
 	minOrderPercent: int(process.env.MIN_ORDER_SIZE_OF_CURRENT_BALANCE),
@@ -51,7 +52,7 @@ function checkForEmptySellSide() {
 				}
 			});
 			const percentDifference = (minOrderPrice / book.lowestAsk - 1) * 100;
-			const maxDiff = environment.profitPercentMax + 0.5;
+			const maxDiff = environment.sellSpreadMax;
 			if (percentDifference > maxDiff) {
 				console.log(`difference lowest ask / my lowest sell (${percentDifference}) too low (max: ${maxDiff}), runnung bot`);
 				nanoUsdtBuySell();
