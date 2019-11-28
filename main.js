@@ -28,11 +28,11 @@ let sellExtraNanosOnNextRound = {
 new CronJob('0 * * * *', function() {
 	const hour = new Date().getHours();
 	console.log(hour, environment.everyXHours, ' % ', hour % environment.everyXHours, ' --------- ', new Date().toUTCString());
-  if (hour % environment.everyXHours === 0) {
+  checkForEmptySellSide();
+  /* if (hour % environment.everyXHours === 0) {
 		nanoUsdtBuySell();
   } else {
-		checkForEmptySellSide();
-	}
+  } */
 }, null, true, 'America/Los_Angeles');
 
 function checkForEmptySellSide() {
