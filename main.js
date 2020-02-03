@@ -25,23 +25,16 @@ let sellExtraNanosOnNextRound = {
 	boughtAt: 0,
 }
 
-new CronJob('0 * * * *', function() {
-	const hour = new Date().getHours();
-	console.log(hour, environment.everyXHours, ' % ', hour % environment.everyXHours, ' --------- ', new Date().toUTCString());
+new CronJob('*/20 * * * *', function() {
   checkForEmptySellSide();
-  /* if (hour % environment.everyXHours === 0) {
-		nanoUsdtBuySell();
-  } else {
-  } */
 }, null, true, 'America/Los_Angeles');
 
 function checkForEmptySellSide() {
 	Promise.all([client.openOrders({symbol: 'NANOUSDT'}), getBook()]).then(array => {
-
 		const sellOrders = (array[0] || []).filter(o => o.side === 'SELL').map(o => float(o.price));
 		const book = array[1];
-		
-		if (sellOrders.length === 0) {
+
+    if (sellOrders.length === 0) {
 			console.log('no other orders, run bot');
 			nanoUsdtBuySell();
 		} else {
@@ -54,9 +47,9 @@ function checkForEmptySellSide() {
 			const percentDifference = (minOrderPrice / book.lowestAsk - 1) * 100;
 			const maxDiff = environment.sellSpreadMax;
 			if (percentDifference > maxDiff) {
-				console.log(`difference lowest ask / my lowest sell (${percentDifference}) too low (max: ${maxDiff}), runnung bot`);
+        console.log(`difference lowest ask / my lowest sell (${percentDifference}) too low (max: ${maxDiff}), runnung bot`);
 				nanoUsdtBuySell();
-			}
+      }
 		}
 	}).catch(err => {
 		console.log('could not check sell orders ', err);
@@ -65,7 +58,7 @@ function checkForEmptySellSide() {
 
 async function nanoUsdtBuySell() {
 	
-	const book = await getBook();
+  const book = await getBook();
 	if (book.usdtBalance < environment.minOrderUsdt) {
 		return;
 	}
