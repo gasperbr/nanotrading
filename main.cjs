@@ -14,7 +14,6 @@ const environment = {
 	profitPercentMin: float(process.env.PROFIT_PERCENT_MIN),
 	profitPercentMax: float(process.env.PROFIT_PERCENT_MAX),
 	sellSpreadMax: float(process.env.SELL_SPREAD_MAX),
-	everyXHours: int(process.env.EVERY_X_HOURS),
 	minOrderUsdt: float(process.env.MIN_ORDER_USDT),
 	minOrderPercent: int(process.env.MIN_ORDER_SIZE_OF_CURRENT_BALANCE),
 	priceDecimals: int(process.env.PRICE_DECIMALS),
