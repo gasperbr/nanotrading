@@ -31,7 +31,7 @@ let sellExtraNanosOnNextRound = {
 	boughtAt: 0,
 }
 
-new CronJob('*/20 * * * *', function() {
+new CronJob('*/10 * * * *', function() {
   checkForEmptySellSide();
 }, null, true, 'America/Los_Angeles');
 
@@ -53,8 +53,10 @@ function checkForEmptySellSide() {
 			const percentDifference = (minOrderPrice / book.lowestAsk - 1) * 100;
 			const maxDiff = environment.sellSpreadMax;
 			if (percentDifference > maxDiff) {
-        console.log(`difference lowest ask / my lowest sell (${percentDifference}) too low (max: ${maxDiff}), runnung bot`);
+        console.log(`difference lowest ask / my lowest sell (${percentDifference}) too high (max: ${maxDiff}), runnung bot`);
 				nanoUsdtBuySell();
+      } else {
+        console.log(`difference lowest ask / my lowest sell (${percentDifference}) too low (max: ${maxDiff}), do nothing`);
       }
 		}
 	}).catch(err => {
@@ -205,7 +207,7 @@ async function tryLimitOrder(book) {
 					symbol: 'NANOUSDT',
 					orderId: order.orderId,
 				}).then(resolve).catch(reject);
-			}, 1000 * 60 * 15); // 15min
+			}, 1000 * 60 * 5); // 5min
 
 		}).catch(reject);
 	});
